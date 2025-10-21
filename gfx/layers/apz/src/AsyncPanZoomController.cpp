@@ -98,6 +98,7 @@
 static mozilla::LazyLogModule sApzCtlLog("apz.controller");
 #define APZC_LOG(...) MOZ_LOG(sApzCtlLog, LogLevel::Debug, (__VA_ARGS__))
 #define APZC_LOGV(...) MOZ_LOG(sApzCtlLog, LogLevel::Verbose, (__VA_ARGS__))
+#define APZC_LOG_CUSTOM(...) MOZ_LOG(sApzCtlLog, LogLevel::Error, (__VA_ARGS__))
 
 // Log to the apz.controller log with additional info from the APZC
 #define APZC_LOG_DETAIL(fmt, apzc, ...)                   \
@@ -108,6 +109,10 @@ static mozilla::LazyLogModule sApzCtlLog("apz.controller");
   APZC_LOGV("%p(%s scrollId=%" PRIu64 "): " fmt, (apzc),   \
             (apzc)->IsRootContent() ? "root" : "subframe", \
             (apzc)->GetScrollId(), ##__VA_ARGS__)
+#define APZC_LOG_DETAIL_CUSTOM(fmt, apzc, ...)                   \
+  APZC_LOG_CUSTOM("%p(%s scrollId=%" PRIu64 "): " fmt, (apzc),   \
+           (apzc)->IsRootContent() ? "root" : "subframe", \
+           (apzc)->GetScrollId(), ##__VA_ARGS__)
 
 #define APZC_LOG_FM_COMMON(fm, prefix, level, ...)                 \
   if (MOZ_LOG_TEST(sApzCtlLog, level)) {                           \
@@ -1394,8 +1399,11 @@ void AsyncPanZoomController::StopAutoscroll() {
 
 nsEventStatus AsyncPanZoomController::OnTouchStart(
     const MultiTouchInput& aEvent) {
-  APZC_LOG_DETAIL("got a touch-start in state %s\n", this,
+  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+  		std::chrono::system_clock::now().time_since_epoch()).count();
+  APZC_LOG_DETAIL_CUSTOM("[%ld][%d] got a touch-start in state %s\n", this, now, getpid(),
                   ToString(mState).c_str());
+
   mPanDirRestricted = false;
 
   switch (mState) {
@@ -1445,7 +1453,9 @@ nsEventStatus AsyncPanZoomController::OnTouchStart(
 
 nsEventStatus AsyncPanZoomController::OnTouchMove(
     const MultiTouchInput& aEvent) {
-  APZC_LOG_DETAIL("got a touch-move in state %s\n", this,
+  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+  		std::chrono::system_clock::now().time_since_epoch()).count();
+  APZC_LOG_DETAIL_CUSTOM("[%ld][%d] got a touch-move in state %s\n", this, now, getpid(),
                   ToString(mState).c_str());
   switch (mState) {
     case FLING:
@@ -1547,7 +1557,7 @@ nsEventStatus AsyncPanZoomController::OnTouchMove(
 
 nsEventStatus AsyncPanZoomController::OnTouchEnd(
     const MultiTouchInput& aEvent) {
-  APZC_LOG_DETAIL("got a touch-end in state %s\n", this,
+  APZC_LOG_DETAIL_CUSTOM("got a touch-end in state %s\n", this,
                   ToString(mState).c_str());
   OnTouchEndOrCancel();
 
@@ -1631,7 +1641,7 @@ nsEventStatus AsyncPanZoomController::OnTouchEnd(
 
 nsEventStatus AsyncPanZoomController::OnTouchCancel(
     const MultiTouchInput& aEvent) {
-  APZC_LOG_DETAIL("got a touch-cancel in state %s\n", this,
+  APZC_LOG_DETAIL_CUSTOM("got a touch-cancel in state %s\n", this,
                   ToString(mState).c_str());
   OnTouchEndOrCancel();
   CancelAnimationAndGestureState();
@@ -6612,7 +6622,7 @@ AsyncPanZoomController::PanZoomState
 AsyncPanZoomController::SetStateNoContentControllerDispatch(
     PanZoomState aNewState) {
   RecursiveMutexAutoLock lock(mRecursiveMutex);
-  APZC_LOG_DETAIL("changing from state %s to %s\n", this,
+  APZC_LOG_DETAIL_CUSTOM("changing from state %s to %s\n", this,
                   ToString(mState).c_str(), ToString(aNewState).c_str());
   PanZoomState oldState = mState;
   mState = aNewState;

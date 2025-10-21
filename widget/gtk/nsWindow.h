@@ -64,6 +64,10 @@ extern mozilla::LazyLogModule gWidgetWaylandLog;
     MOZ_LOG(IsPopup() ? gWidgetPopupLog : gWidgetLog, \
             mozilla::LogLevel::Debug,                 \
             ("%s: " str, GetDebugTag().get(), ##__VA_ARGS__))
+#  define LOG_CUSTOM(str, ...)                               \
+    MOZ_LOG(IsPopup() ? gWidgetPopupLog : gWidgetLog, \
+            mozilla::LogLevel::Error,                 \
+            ("%s: " str, GetDebugTag().get(), ##__VA_ARGS__))
 #  define LOGVERBOSE(str, ...)                        \
     MOZ_LOG(IsPopup() ? gWidgetPopupLog : gWidgetLog, \
             mozilla::LogLevel::Verbose,               \

@@ -69,11 +69,17 @@ add_task(async () => {
   // Make sure APZ is ready in the popup.
   await promiseApzFlushedRepaints(panel);
 
-  await promiseNativeTouchDrag(container, 50, 50, 0, -20);
+  info("\n\n\nBefore test\n\n\n");
+
+  await promiseNativeTouchDrag(container, 50, 50, 0, -10);
   await SimpleTest.promiseWaitForCondition(() => {
     return container.scrollTop > 0;
   }, "Waiting for scroll position change");
   await scrollPromise;
+
+  info("\n\n\nAfter test\n\n\n");
+
+  SimpleTest.requestCompleteLog();
 
   ok(
     container.scrollTop,

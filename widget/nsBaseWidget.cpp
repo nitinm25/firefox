@@ -1325,7 +1325,9 @@ nsIWidget::ContentAndAPZEventStatus nsBaseWidget::DispatchInputEvent(
 
   if (mAPZC) {
     if (APZThreadUtils::IsControllerThread()) {
+      MOZ_LOG(sBaseWidgetLog, LogLevel::Error, ("Sending call to APZC\n"));
       APZEventResult result = mAPZC->InputBridge()->ReceiveInputEvent(*aEvent);
+      MOZ_LOG(sBaseWidgetLog, LogLevel::Error, ("Completed call to APZC\n"));
       status.mApzStatus = result.GetStatus();
       if (result.GetStatus() == nsEventStatus_eConsumeNoDefault) {
         return status;

@@ -28,6 +28,8 @@ static mozilla::LazyLogModule sApzInpLog("apz.inputqueue");
 #define INPQ_LOG(...) MOZ_LOG(sApzInpLog, LogLevel::Debug, (__VA_ARGS__))
 #define INPQ_LOG_TEST() MOZ_LOG_TEST(sApzInpLog, LogLevel::Debug)
 
+#define INPQ_LOG_CUSTOM(...) MOZ_LOG(sApzInpLog, LogLevel::Error, (__VA_ARGS__))
+
 namespace mozilla {
 namespace layers {
 
@@ -124,7 +126,7 @@ APZEventResult InputQueue::ReceiveTouchInput(
     }
 
     block = StartNewTouchBlock(aTarget, aFlags);
-    INPQ_LOG("started new touch block %p id %" PRIu64 " for target %p\n",
+    INPQ_LOG_CUSTOM("started new touch block %p id %" PRIu64 " for target %p\n",
              block.get(), block->GetBlockId(), aTarget.get());
 
     // XXX using the chain from |block| here may be wrong in cases where the
@@ -174,7 +176,7 @@ APZEventResult InputQueue::ReceiveTouchInput(
       return result;
     }
 
-    INPQ_LOG("received new touch event (type=%d) in block %p\n", aEvent.mType,
+    INPQ_LOG_CUSTOM("received new touch event (type=%d) in block %p\n", aEvent.mType,
              block.get());
   }
 
@@ -1080,7 +1082,7 @@ bool InputQueue::ProcessQueue() {
       break;
     }
 
-    INPQ_LOG(
+    INPQ_LOG_CUSTOM(
         "processing input from block %p; preventDefault %d shouldDropEvents %d "
         "target %p\n",
         curBlock, cancelable && cancelable->IsDefaultPrevented(),
