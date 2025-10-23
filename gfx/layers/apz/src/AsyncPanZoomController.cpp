@@ -1399,9 +1399,9 @@ void AsyncPanZoomController::StopAutoscroll() {
 
 nsEventStatus AsyncPanZoomController::OnTouchStart(
     const MultiTouchInput& aEvent) {
-  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
   		std::chrono::system_clock::now().time_since_epoch()).count();
-  APZC_LOG_DETAIL_CUSTOM("[%ld][%d] got a touch-start in state %s\n", this, now, getpid(),
+  APZC_LOG_DETAIL_CUSTOM("[TS: %ld][PID: %d] got a touch-start in state %s\n", this, now, getpid(),
                   ToString(mState).c_str());
 
   mPanDirRestricted = false;
@@ -1453,10 +1453,10 @@ nsEventStatus AsyncPanZoomController::OnTouchStart(
 
 nsEventStatus AsyncPanZoomController::OnTouchMove(
     const MultiTouchInput& aEvent) {
-  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
-  		std::chrono::system_clock::now().time_since_epoch()).count();
-  APZC_LOG_DETAIL_CUSTOM("[%ld][%d] got a touch-move in state %s\n", this, now, getpid(),
-                  ToString(mState).c_str());
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+      std::chrono::system_clock::now().time_since_epoch()).count();
+  APZC_LOG_DETAIL_CUSTOM("[TS: %ld][PID: %d] got a touch-move in state %s\n",
+                        this, now, getpid(), ToString(mState).c_str());
   switch (mState) {
     case FLING:
     case SMOOTH_SCROLL:
@@ -1557,7 +1557,9 @@ nsEventStatus AsyncPanZoomController::OnTouchMove(
 
 nsEventStatus AsyncPanZoomController::OnTouchEnd(
     const MultiTouchInput& aEvent) {
-  APZC_LOG_DETAIL_CUSTOM("got a touch-end in state %s\n", this,
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+  		std::chrono::system_clock::now().time_since_epoch()).count();
+  APZC_LOG_DETAIL_CUSTOM("[TS: %ld][PID: %d] got a touch-end in state %s\n", this, now, getpid(),
                   ToString(mState).c_str());
   OnTouchEndOrCancel();
 
@@ -1641,7 +1643,9 @@ nsEventStatus AsyncPanZoomController::OnTouchEnd(
 
 nsEventStatus AsyncPanZoomController::OnTouchCancel(
     const MultiTouchInput& aEvent) {
-  APZC_LOG_DETAIL_CUSTOM("got a touch-cancel in state %s\n", this,
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+  		std::chrono::system_clock::now().time_since_epoch()).count();
+  APZC_LOG_DETAIL_CUSTOM("[TS: %ld][PID: %d] got a touch-cancel in state %s\n", this, now, getpid(),
                   ToString(mState).c_str());
   OnTouchEndOrCancel();
   CancelAnimationAndGestureState();
@@ -6622,7 +6626,9 @@ AsyncPanZoomController::PanZoomState
 AsyncPanZoomController::SetStateNoContentControllerDispatch(
     PanZoomState aNewState) {
   RecursiveMutexAutoLock lock(mRecursiveMutex);
-  APZC_LOG_DETAIL_CUSTOM("changing from state %s to %s\n", this,
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+  		std::chrono::system_clock::now().time_since_epoch()).count();
+  APZC_LOG_DETAIL_CUSTOM("[TS: %ld][PID: %d] changing from state %s to %s\n", this, now, getpid(),
                   ToString(mState).c_str(), ToString(aNewState).c_str());
   PanZoomState oldState = mState;
   mState = aNewState;

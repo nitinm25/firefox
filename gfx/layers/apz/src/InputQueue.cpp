@@ -41,6 +41,11 @@ APZEventResult InputQueue::ReceiveInputEvent(
     const RefPtr<AsyncPanZoomController>& aTarget,
     TargetConfirmationFlags aFlags, InputData& aEvent,
     const Maybe<nsTArray<TouchBehaviorFlags>>& aTouchBehaviors) {
+
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::system_clock::now().time_since_epoch()).count();
+  INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] Received input event\n", now, getpid());
+  
   APZThreadUtils::AssertOnControllerThread();
 
   AutoRunImmediateTimeout timeoutRunner{this};
@@ -126,7 +131,9 @@ APZEventResult InputQueue::ReceiveTouchInput(
     }
 
     block = StartNewTouchBlock(aTarget, aFlags);
-    INPQ_LOG_CUSTOM("started new touch block %p id %" PRIu64 " for target %p\n",
+    auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+    INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] started new touch block %p id %" PRIu64 " for target %p\n", now, getpid(),
              block.get(), block->GetBlockId(), aTarget.get());
 
     // XXX using the chain from |block| here may be wrong in cases where the
@@ -176,7 +183,9 @@ APZEventResult InputQueue::ReceiveTouchInput(
       return result;
     }
 
-    INPQ_LOG_CUSTOM("received new touch event (type=%d) in block %p\n", aEvent.mType,
+    auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+      std::chrono::system_clock::now().time_since_epoch()).count();
+    INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] received new touch event (type=%d) in block %p\n", now, getpid(), aEvent.mType,
              block.get());
   }
 
@@ -258,6 +267,10 @@ APZEventResult InputQueue::ReceiveTouchInput(
              aTarget.get());
     aTarget->PostDelayedTask(maybeLongTap.forget(), longTapTimeout);
   }
+
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::system_clock::now().time_since_epoch()).count();
+  INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] Processed touch input\n", now, getpid());
 
   return result;
 }
@@ -1081,10 +1094,11 @@ bool InputQueue::ProcessQueue() {
       }
       break;
     }
-
+    auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
     INPQ_LOG_CUSTOM(
-        "processing input from block %p; preventDefault %d shouldDropEvents %d "
-        "target %p\n",
+        "[TS: %ld][PID: %d] processing input from block %p; preventDefault %d shouldDropEvents %d "
+        "target %p\n", now, getpid(),
         curBlock, cancelable && cancelable->IsDefaultPrevented(),
         curBlock->ShouldDropEvents(), curBlock->GetTargetApzc().get());
     RefPtr<AsyncPanZoomController> target = curBlock->GetTargetApzc();

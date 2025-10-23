@@ -5824,9 +5824,9 @@ void nsWindow::OnTouchpadHoldEvent(GdkTouchpadGesturePhase aPhase, guint aTime,
 }
 
 gboolean nsWindow::OnTouchEvent(GdkEventTouch* aEvent) {
-  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+  auto now = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::system_clock::now().time_since_epoch()).count();
-  LOG_CUSTOM("[%ld][%d] OnTouchEvent: x=%.2f y=%.2f type=%d\n", 
+  LOG_CUSTOM("[TS: %ld][PID: %d] OnTouchEvent: x=%.2f y=%.2f type=%d\n", 
           now, getpid(), aEvent->x, aEvent->y, aEvent->type);
   if (!mHandleTouchEvent) {
     // If a popup window was spawned (e.g. as the result of a long-press)
