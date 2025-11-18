@@ -69,9 +69,59 @@ add_task(async () => {
   // Make sure APZ is ready in the popup.
   await promiseApzFlushedRepaints(panel);
 
+
+  // Test 1
   info("\n\n\nBefore test\n\n\n");
 
-  await promiseNativeTouchDrag(container, 50, 50, 0, -10);
+  await promiseNativeTouchDrag(container, 50, 50, 0, -100);
+  await SimpleTest.promiseWaitForCondition(() => {
+    return container.scrollTop > 0;
+  }, "Waiting for scroll position change");
+  await scrollPromise;
+
+  info("\n\n\nAfter test\n\n\n");
+
+
+  // Test 2
+  info("\n\n\nBefore test\n\n\n");
+
+  await promiseNativeTouchDrag(container, 50, 50, 0, -100);
+  await SimpleTest.promiseWaitForCondition(() => {
+    return container.scrollTop > 0;
+  }, "Waiting for scroll position change");
+  await scrollPromise;
+
+  info("\n\n\nAfter test\n\n\n");
+
+
+  // Test 3
+  info("\n\n\nBefore test\n\n\n");
+
+  await promiseNativeTouchDrag(container, 50, 50, 0, -100);
+  await SimpleTest.promiseWaitForCondition(() => {
+    return container.scrollTop > 0;
+  }, "Waiting for scroll position change");
+  await scrollPromise;
+
+  info("\n\n\nAfter test\n\n\n");
+
+
+  // Test 4
+  info("\n\n\nBefore test\n\n\n");
+
+  await promiseNativeTouchDrag(container, 50, 50, 0, -100);
+  await SimpleTest.promiseWaitForCondition(() => {
+    return container.scrollTop > 0;
+  }, "Waiting for scroll position change");
+  await scrollPromise;
+
+  info("\n\n\nAfter test\n\n\n");
+
+
+  // Test 5
+  info("\n\n\nBefore test\n\n\n");
+
+  await promiseNativeTouchDrag(container, 50, 50, 0, -100);
   await SimpleTest.promiseWaitForCondition(() => {
     return container.scrollTop > 0;
   }, "Waiting for scroll position change");

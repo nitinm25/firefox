@@ -1328,13 +1328,13 @@ nsIWidget::ContentAndAPZEventStatus nsBaseWidget::DispatchInputEvent(
 
       auto now = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
-      MOZ_LOG(sBaseWidgetLog, LogLevel::Error, ("[TS: %ld][PID: %d] Sending call to APZC\n", now, getpid()));
+      MOZ_LOG(sBaseWidgetLog, LogLevel::Error, ("[TS: %ld] Sending call to APZC\n", now));
 
       APZEventResult result = mAPZC->InputBridge()->ReceiveInputEvent(*aEvent);
 
       now = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
-      MOZ_LOG(sBaseWidgetLog, LogLevel::Error, ("[TS: %ld][PID: %d] Completed call to APZC\n\n\n", now, getpid()));
+      MOZ_LOG(sBaseWidgetLog, LogLevel::Error, ("[TS: %ld] Completed call to APZC\n\n\n", now));
 
       status.mApzStatus = result.GetStatus();
       if (result.GetStatus() == nsEventStatus_eConsumeNoDefault) {

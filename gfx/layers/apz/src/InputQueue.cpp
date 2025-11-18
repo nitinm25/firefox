@@ -44,7 +44,7 @@ APZEventResult InputQueue::ReceiveInputEvent(
 
   auto now = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::system_clock::now().time_since_epoch()).count();
-  INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] Received input event\n", now, getpid());
+  INPQ_LOG_CUSTOM("[TS: %ld] Received input event\n", now);
   
   APZThreadUtils::AssertOnControllerThread();
 
@@ -133,7 +133,7 @@ APZEventResult InputQueue::ReceiveTouchInput(
     block = StartNewTouchBlock(aTarget, aFlags);
     auto now = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
-    INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] started new touch block %p id %" PRIu64 " for target %p\n", now, getpid(),
+    INPQ_LOG_CUSTOM("[TS: %ld] started new touch block %p id %" PRIu64 " for target %p\n", now,
              block.get(), block->GetBlockId(), aTarget.get());
 
     // XXX using the chain from |block| here may be wrong in cases where the
@@ -185,7 +185,7 @@ APZEventResult InputQueue::ReceiveTouchInput(
 
     auto now = std::chrono::duration_cast<std::chrono::microseconds>(
       std::chrono::system_clock::now().time_since_epoch()).count();
-    INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] received new touch event (type=%d) in block %p\n", now, getpid(), aEvent.mType,
+    INPQ_LOG_CUSTOM("[TS: %ld] received new touch event (type=%d) in block %p\n", now, aEvent.mType,
              block.get());
   }
 
@@ -270,7 +270,7 @@ APZEventResult InputQueue::ReceiveTouchInput(
 
   auto now = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::system_clock::now().time_since_epoch()).count();
-  INPQ_LOG_CUSTOM("[TS: %ld][PID: %d] Processed touch input\n", now, getpid());
+  INPQ_LOG_CUSTOM("[TS: %ld] Processed touch input\n", now);
 
   return result;
 }
@@ -1097,8 +1097,8 @@ bool InputQueue::ProcessQueue() {
     auto now = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
     INPQ_LOG_CUSTOM(
-        "[TS: %ld][PID: %d] processing input from block %p; preventDefault %d shouldDropEvents %d "
-        "target %p\n", now, getpid(),
+        "[TS: %ld] processing input from block %p; preventDefault %d shouldDropEvents %d "
+        "target %p\n", now,
         curBlock, cancelable && cancelable->IsDefaultPrevented(),
         curBlock->ShouldDropEvents(), curBlock->GetTargetApzc().get());
     RefPtr<AsyncPanZoomController> target = curBlock->GetTargetApzc();
